@@ -40,6 +40,10 @@ To run manually, you have to first figure out which ABI your device supports:
 ```bash
 ABI=$(adb shell getprop ro.product.cpu.abi | tr -d '\r')
 ```
+```powershell
+# For powershell
+$ABI=(adb shell getprop ro.product.cpu.abi) -replace '\r'
+```
 
 _Note that as Android shell always ends lines with CRLF, you'll have to remove the CR like above or the rest of the commands will not work properly._
 
