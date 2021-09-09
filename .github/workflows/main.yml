@@ -37,5 +37,4 @@ jobs:
         with:
           name: libs
           path: libs
-      Available Options:
           retention-days: 90
