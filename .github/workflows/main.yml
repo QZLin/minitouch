@@ -25,18 +25,9 @@ jobs:
       - name: Android NDK toolchain Setup
         # You may pin to the exact commit or the version.
         # uses: ravinderjangra/android-ndk-toolchain-setup@88bfbd8e61af597832637fb9d2f81a7cc68d1331
-        uses: ravinderjangra/android-ndk-toolchain-setup@0.2
+        uses: nttld/setup-ndk@v1.0.6
         with:
-          # Android API
-          api: 21
-          # Platform arch
-          arch: x86
-          # Path to use for NDK toolchain
-          install-location: ndk
-          # Force install toolchain
-#           force: # optional, default is false
-          # Add toolchain to the path
-          add-to-path: true
+          ndk-version: r21e
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: fetch submodules  
