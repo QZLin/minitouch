@@ -20,18 +20,19 @@ jobs:
           ndk-version: r21e
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: Fetch submodules
-        run: |
-          git submodule init
-          git submodule update
+        with:
+          submodules: true
+      # - name: Fetch submodules
+      #   run: |
+      #     git submodule init
+      #     git submodule update
       - name: Build
         run: |
           ndk-build
           ls
           ls libs
+          echo Build finish!
 
-      - name: Finish build
-        run: Build finish!
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
