@@ -48,7 +48,7 @@ jobs:
         run: . ./check_if_new.ps1
       - name: Cancel this build if not new
         uses: andymckay/cancel-action@0.2
-        if: ( ! (${{ env.new_commit }}) )
+        if: ${{ env.new_commit }} != true
 
       - name: set outputs
         id: out
