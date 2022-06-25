@@ -37,10 +37,12 @@ jobs:
 
       - name: test env
         run: |
-          Write-Output $env:GITHUB_REPOSITORY
+          Write-Output $env:this_repo
+          $last_release_json = $env:last_release_json
           Write-Output "last_release_json=$last_release_json" >> $Env:GITHUB_ENV
           Write-Output "last_release_json=$last_release_json"
         env:
+          this_repo: ${{ env.GITHUB_REPOSITORY }}
           last_release_json: ${{ steps.get_latest.outputs.releases }}
 
       - name: Check commit
