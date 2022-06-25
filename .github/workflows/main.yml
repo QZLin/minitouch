@@ -1,41 +1,98 @@
 name: Build minitouch
 
 on:
+  schedule:
+    - cron: "0 0 * * *"
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  # This workflow contains a single job called "build"
+  check:
+    name: Check if new commit
+    defaults:
+      run:
+        shell: pwsh
+    runs-on: windows-latest
+    steps:
+      # checkout
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: DeviceFarmer/minitouch
+          submodules: true
+          path: DeviceFarmer_minitouch
+
+      - name: Get Release
+        uses: ctrlaltdev/get-releases-action@v1.1.0
+        id: get_latest
+        with:
+          repo: QZLin/minitouch
+          limit: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: test env
+        run: |
+          Write-Output $env:GITHUB_REPOSITORY
+          Write-Output "last_release_json=$last_release_json" >> $Env:GITHUB_ENV
+          Write-Output "last_release_json=$last_release_json"
+        env:
+          last_release_json: ${{ steps.get_latest.outputs.releases }}
+
+      - name: Check commit
+        id: checker
+        run: . ./check_if_new.ps1
+      - name: Cancel this build if not new
+        uses: andymckay/cancel-action@0.2
+        if: ( ! (${{ env.new_commit }}) )
+
+      - name: set outputs
+    outputs:
+      commit: ${{ env.current_commit }}
+      msg: ${{ env.current_commit_msg }}
+
   build:
     runs-on: windows-latest
+    needs: check
     steps:
       - name: Android NDK toolchain Setup
         uses: nttld/setup-ndk@v1.0.6
         with:
           ndk-version: r21e
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
+          repository: DeviceFarmer/minitouch
           submodules: true
-      # - name: Fetch submodules
-      #   run: |
-      #     git submodule init
-      #     git submodule update
-      - name: Build
+          path: DeviceFarmer_minitouch
+
+      - name: build
         run: |
+          Push-Location DeviceFarmer_minitouch
           ndk-build
           ls
           ls libs
-          echo Build finish!
+          echo Build finished!
+          Pop-Location
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
           name: libs
-          path: libs
-          retention-days: 90
+          path: DeviceFarmer_minitouch/libs
+          retention-days: 1
+
+      - name: Compress output
+        run: Compress-Archive -Path DeviceFarmer_minitouch/libs -DestinationPath libs.zip
+
+      - name: GH Release
+        uses: softprops/action-gh-release@v0.1.14
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ needs.check.outputs.commit }}
+          name: ${{ needs.check.outputs.msg }}
+          body: This is an auto release by github actions
+          files: libs.zip
