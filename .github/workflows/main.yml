@@ -51,9 +51,14 @@ jobs:
         if: ( ! (${{ env.new_commit }}) )
 
       - name: set outputs
+        id: out
+        run: |
+          echo "::set-output name=current_commit::$($Env:current_commit)"
+          echo "::set-output name=current_commit_msg::$($Env:current_commit_msg)"
     outputs:
       commit: ${{ env.current_commit }}
       msg: ${{ env.current_commit_msg }}
+      # msg: ${{ steps.out.outputs.current_commit_msg }}
 
   build:
     runs-on: windows-latest
