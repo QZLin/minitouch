@@ -1,12 +1,12 @@
 name: Build minitouch
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  #schedule:
+  #  - cron: "0 0 * * *"
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
+  #pull_request:
+  #  branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       # checkout
       - uses: actions/checkout@v3
@@ -37,10 +37,10 @@ jobs:
 
       - name: test env
         run: |
-          Write-Output $env:this_repo
+          echo $env:this_repo
           $last_release_json = $env:last_release_json
-          Write-Output "last_release_json=$last_release_json" >> $Env:GITHUB_ENV
-          Write-Output "last_release_json=$last_release_json"
+          echo "last_release_json=$last_release_json" >> $Env:GITHUB_ENV
+          echo "last_release_json=$last_release_json"
         env:
           this_repo: ${{ env.GITHUB_REPOSITORY }}
           last_release_json: ${{ steps.get_latest.outputs.releases }}
@@ -63,7 +63,10 @@ jobs:
       # msg: ${{ steps.out.outputs.current_commit_msg }}
 
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
     needs: check
     steps:
       - name: Android NDK toolchain Setup
