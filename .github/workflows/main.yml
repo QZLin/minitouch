@@ -28,7 +28,7 @@ jobs:
           path: DeviceFarmer_minitouch
 
       - name: Get Release
-        uses: ctrlaltdev/get-releases-action@v1.1.0
+        uses: ctrlaltdev/get-releases-action@master
         id: get_latest
         with:
           repo: QZLin/minitouch
@@ -49,7 +49,7 @@ jobs:
         id: checker
         run: . ./check_if_new.ps1
       - name: Cancel this build if not new
-        uses: andymckay/cancel-action@0.2
+        uses: andymckay/cancel-action@master
         if: ${{ contains(env.new_commit,'false') }}
 
       - name: set outputs
@@ -70,7 +70,7 @@ jobs:
     needs: check
     steps:
       - name: Android NDK toolchain Setup
-        uses: nttld/setup-ndk@v1.0.6
+        uses: nttld/setup-ndk@master
         with:
           ndk-version: r21e
       - uses: actions/checkout@v3
@@ -89,7 +89,7 @@ jobs:
           Pop-Location
 
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@master
         with:
           name: libs
           path: DeviceFarmer_minitouch/libs
@@ -99,7 +99,7 @@ jobs:
         run: Compress-Archive -Path DeviceFarmer_minitouch/libs -DestinationPath libs.zip
 
       - name: GH Release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ needs.check.outputs.commit }}
