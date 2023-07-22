@@ -28,7 +28,7 @@ jobs:
           path: DeviceFarmer_minitouch
 
       - name: Get Release
-        uses: ctrlaltdev/get-releases-action@master
+        uses: ctrlaltdev/get-releases-action@main
         id: get_latest
         with:
           repo: QZLin/minitouch
